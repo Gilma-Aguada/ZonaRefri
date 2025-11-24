@@ -1,0 +1,1679 @@
+planillas/panel de control.html
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Vista Thymeleaf</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .hero-thymeleaf {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        .stat-box {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+        }
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .badge-thymeleaf {
+            padding: 0.4em 0.8em;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body style="background-color: #f8f9fa;">
+    
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-tools"></i> Reparación de Electrodomésticos
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes.html">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/productos.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pedidos.html">Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/thymeleaf">Vista Thymeleaf</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-thymeleaf text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Dashboard Thymeleaf</h1>
+            <p class="lead">Vista renderizada del lado del servidor con Spring Boot</p>
+            <span class="badge bg-light text-dark fs-6">
+                <i class="bi bi-server"></i> Server-Side Rendering
+            </span>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-box text-center">
+                    <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
+                    <h2 class="mt-2" th:text="${totalClientes}">0</h2>
+                    <p class="text-muted mb-0">Total Clientes</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box text-center">
+                    <i class="bi bi-box-seam text-success" style="font-size: 3rem;"></i>
+                    <h2 class="mt-2" th:text="${totalProductos}">0</h2>
+                    <p class="text-muted mb-0">Total Productos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box text-center">
+                    <i class="bi bi-cart-fill text-warning" style="font-size: 3rem;"></i>
+                    <h2 class="mt-2" th:text="${totalPedidos}">0</h2>
+                    <p class="text-muted mb-0">Total Pedidos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box text-center">
+                    <i class="bi bi-clock-history text-info" style="font-size: 3rem;"></i>
+                    <h2 class="mt-2" th:text="${cantidadPendientes}">0</h2>
+                    <p class="text-muted mb-0">Pedidos Pendientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clientes Recientes -->
+        <div class="table-container">
+            <h3 class="mb-3">
+                <i class="bi bi-people text-primary"></i> Clientes Registrados
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${clientes.isEmpty()}">
+                            <td colspan="4" class="text-center text-muted">No hay clientes registrados</td>
+                        </tr>
+                        <tr th:each="cliente : ${clientes}">
+                            <td th:text="${cliente.idCliente}">1</td>
+                            <td th:text="${cliente.nombre}">Juan Pérez</td>
+                            <td th:text="${cliente.email}">juan@example.com</td>
+                            <td th:text="${cliente.telefono}">123456789</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Productos con Bajo Stock -->
+        <div class="table-container">
+            <h3 class="mb-3">
+                <i class="bi bi-exclamation-triangle text-danger"></i> Productos con Bajo Stock
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-danger">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${productosBajoStock.isEmpty()}">
+                            <td colspan="5" class="text-center text-success">
+                                <i class="bi bi-check-circle"></i> Todos los productos tienen stock suficiente
+                            </td>
+                        </tr>
+                        <tr th:each="producto : ${productosBajoStock}">
+                            <td th:text="${producto.idProducto}">1</td>
+                            <td th:text="${producto.nombre}">Producto</td>
+                            <td th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2)}">$0.00</td>
+                            <td>
+                                <span class="badge bg-danger" th:text="${producto.stock}">0</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-danger">Bajo Stock</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pedidos Pendientes -->
+        <div class="table-container">
+            <h3 class="mb-3">
+                <i class="bi bi-clock text-warning"></i> Pedidos Pendientes de Pago
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-warning">
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Dirección</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${pedidosPendientes.isEmpty()}">
+                            <td colspan="5" class="text-center text-muted">No hay pedidos pendientes</td>
+                        </tr>
+                        <tr th:each="pedido : ${pedidosPendientes}">
+                            <td th:text="${pedido.idPedido}">1</td>
+                            <td th:text="${pedido.cliente.nombre}">Cliente</td>
+                            <td th:text="${#temporals.format(pedido.fecha, 'dd/MM/yyyy HH:mm')}">01/01/2025 10:00</td>
+                            <td>
+                                <span class="badge bg-warning badge-thymeleaf" th:text="${pedido.estadoPago}">Pendiente</span>
+                            </td>
+                            <td th:text="${pedido.direccionEnvio}">Dirección</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Información sobre Thymeleaf -->
+        <div class="alert alert-info">
+            <h5><i class="bi bi-info-circle"></i> Sobre esta vista</h5>
+            <p class="mb-0">
+                Esta página está renderizada con <strong>Thymeleaf</strong>, el motor de plantillas de Spring Boot.
+                Los datos se procesan en el servidor y se envían como HTML completo al navegador.
+                <br>
+                <strong>Ventajas:</strong> SEO optimizado, carga inicial rápida, sin necesidad de JavaScript para renderizar contenido.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="mb-0">&copy; 2025 Casa de Reparación de Electrodomésticos - Trabajo Integrador</p>
+        <small>Vista renderizada con Thymeleaf</small>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+static/CSS/estilos
+/* Variables de color */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Cards con hover effect */
+.hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon circles */
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Stat cards */
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+/* Table styles */
+.table-hover tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Badge styles */
+.badge-estado {
+    font-size: 0.85rem;
+    padding: 0.4em 0.8em;
+}
+
+/* Button hover effects */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal animations */
+.modal.fade .modal-dialog {
+    transition: transform 0.3s ease-out;
+}
+
+/* Loading spinner */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .stat-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Alert styles */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+js/clientes.js
+// Configuración de la API
+const API_URL = 'http://localhost:8080/api/clientes';
+let modalInstance;
+
+// Cargar clientes al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    cargarClientes();
+    modalInstance = new bootstrap.Modal(document.getElementById('clienteModal'));
+});
+
+// Función para cargar todos los clientes usando fetch
+async function cargarClientes() {
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Error al cargar clientes');
+        
+        const clientes = await response.json();
+        mostrarClientes(clientes);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('No se pudieron cargar los clientes');
+    }
+}
+
+// Función para mostrar clientes en la tabla
+function mostrarClientes(clientes) {
+    const tbody = document.getElementById('tablaClientes');
+    
+    if (clientes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay clientes registrados</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = clientes.map(cliente => `
+        <tr>
+            <td>${cliente.idCliente}</td>
+            <td>${cliente.nombre}</td>
+            <td>${cliente.email}</td>
+            <td>${cliente.telefono}</td>
+            <td>
+                <button class="btn btn-sm btn-warning" onclick="editarCliente(${cliente.idCliente})">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="eliminarCliente(${cliente.idCliente})">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Función para buscar clientes por nombre
+async function buscarClientes() {
+    const nombre = document.getElementById('buscarNombre').value;
+    
+    if (!nombre.trim()) {
+        cargarClientes();
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/buscar?nombre=${encodeURIComponent(nombre)}`);
+        if (!response.ok) throw new Error('Error en la búsqueda');
+        
+        const clientes = await response.json();
+        mostrarClientes(clientes);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al buscar clientes');
+    }
+}
+
+// Abrir modal para nuevo cliente
+function abrirModalNuevo() {
+    document.getElementById('modalTitle').textContent = 'Nuevo Cliente';
+    document.getElementById('formCliente').reset();
+    document.getElementById('clienteId').value = '';
+}
+
+// Función para editar cliente
+async function editarCliente(id) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`);
+        if (!response.ok) throw new Error('Error al cargar cliente');
+        
+        const cliente = await response.json();
+        
+        document.getElementById('modalTitle').textContent = 'Editar Cliente';
+        document.getElementById('clienteId').value = cliente.idCliente;
+        document.getElementById('nombre').value = cliente.nombre;
+        document.getElementById('email').value = cliente.email;
+        document.getElementById('telefono').value = cliente.telefono;
+        
+        modalInstance.show();
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al cargar los datos del cliente');
+    }
+}
+
+// Función para guardar cliente (crear o actualizar)
+async function guardarCliente() {
+    const id = document.getElementById('clienteId').value;
+    const cliente = {
+        nombre: document.getElementById('nombre').value,
+        email: document.getElementById('email').value,
+        telefono: document.getElementById('telefono').value
+    };
+    
+    try {
+        const url = id ? `${API_URL}/${id}` : API_URL;
+        const method = id ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(cliente)
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Error al guardar');
+        }
+        
+        modalInstance.hide();
+        cargarClientes();
+        mostrarExito(id ? 'Cliente actualizado correctamente' : 'Cliente creado correctamente');
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError(error.message);
+    }
+}
+
+// Función para eliminar cliente
+async function eliminarCliente(id) {
+    if (!confirm('¿Está seguro de eliminar este cliente?')) return;
+    
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) throw new Error('Error al eliminar');
+        
+        cargarClientes();
+        mostrarExito('Cliente eliminado correctamente');
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al eliminar el cliente');
+    }
+}
+
+// Funciones auxiliares para mensajes
+function mostrarError(mensaje) {
+    alert('Error: ' + mensaje);
+}
+
+function mostrarExito(mensaje) {
+    alert(mensaje);
+}
+
+index.js
+const API_URL = 'http://localhost:8080/api';
+
+// Cargar estadísticas al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    cargarEstadisticas();
+});
+
+// Función para cargar estadísticas usando fetch
+async function cargarEstadisticas() {
+    try {
+        // Obtener total de clientes
+        const clientesResponse = await fetch(`${API_URL}/clientes`);
+        const clientes = await clientesResponse.json();
+        document.getElementById('totalClientes').textContent = clientes.length;
+
+        // Obtener total de productos
+        const productosResponse = await fetch(`${API_URL}/productos`);
+        const productos = await productosResponse.json();
+        document.getElementById('totalProductos').textContent = productos.length;
+
+        // Obtener total de pedidos
+        const pedidosResponse = await fetch(`${API_URL}/pedidos`);
+        const pedidos = await pedidosResponse.json();
+        document.getElementById('totalPedidos').textContent = pedidos.length;
+
+        // Obtener pedidos pendientes
+        const pendientesResponse = await fetch(`${API_URL}/pedidos/pendientes`);
+        const pendientes = await pendientesResponse.json();
+        document.getElementById('pedidosPendientes').textContent = pendientes.length;
+
+    } catch (error) {
+        console.error('Error al cargar estadísticas:', error);
+        mostrarError('No se pudieron cargar las estadísticas');
+    }
+}
+
+function mostrarError(mensaje) {
+    console.error(mensaje);
+}
+pedido.js
+// Configuración de la API
+const API_URL = 'http://localhost:8080/api/pedidos';
+const CLIENTES_URL = 'http://localhost:8080/api/clientes';
+let modalInstance;
+
+// Cargar pedidos al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    cargarPedidos();
+    cargarClientesSelect();
+    modalInstance = new bootstrap.Modal(document.getElementById('pedidoModal'));
+});
+
+// Función para cargar todos los pedidos
+async function cargarPedidos() {
+    try {
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Error al cargar pedidos');
+        
+        const pedidos = await response.json();
+        mostrarPedidos(pedidos);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('No se pudieron cargar los pedidos');
+    }
+}
+
+// Función para mostrar pedidos en la tabla
+function mostrarPedidos(pedidos) {
+    const tbody = document.getElementById('tablaPedidos');
+    
+    if (pedidos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay pedidos registrados</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = pedidos.map(pedido => {
+        const fecha = new Date(pedido.fecha).toLocaleString('es-AR');
+        const badgeClass = {
+            'Pendiente': 'bg-warning',
+            'Pagado': 'bg-success',
+            'Cancelado': 'bg-danger'
+        }[pedido.estadoPago] || 'bg-secondary';
+        
+        return `
+            <tr>
+                <td>${pedido.idPedido}</td>
+                <td>${pedido.cliente.nombre}</td>
+                <td>${fecha}</td>
+                <td><span class="badge ${badgeClass}">${pedido.estadoPago}</span></td>
+                <td>${pedido.direccionEnvio}</td>
+                <td>
+                    <button class="btn btn-sm btn-info text-white" onclick="verDetalle(${pedido.idPedido})">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="editarPedido(${pedido.idPedido})">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="eliminarPedido(${pedido.idPedido})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Cargar clientes en el select
+async function cargarClientesSelect() {
+    try {
+        const response = await fetch(CLIENTES_URL);
+        const clientes = await response.json();
+        
+        const select = document.getElementById('cliente');
+        select.innerHTML = '<option value="">Seleccione un cliente...</option>' +
+            clientes.map(c => `<option value="${c.idCliente}">${c.nombre}</option>`).join('');
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Cargar pedidos pendientes
+async function cargarPendientes() {
+    try {
+        const response = await fetch(`${API_URL}/pendientes`);
+        const pedidos = await response.json();
+        mostrarPedidos(pedidos);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al cargar pedidos pendientes');
+    }
+}
+
+// Filtrar por estado
+async function filtrarPorEstado(estado) {
+    try {
+        const response = await fetch(API_URL);
+        const todosLosPedidos = await response.json();
+        const pedidosFiltrados = todosLosPedidos.filter(p => p.estadoPago === estado);
+        mostrarPedidos(pedidosFiltrados);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Abrir modal para nuevo pedido
+function abrirModalNuevo() {
+    document.getElementById('modalTitle').textContent = 'Nuevo Pedido';
+    document.getElementById('formPedido').reset();
+    document.getElementById('pedidoId').value = '';
+}
+
+// Función para editar pedido
+async function editarPedido(id) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`);
+        const pedido = await response.json();
+        
+        document.getElementById('modalTitle').textContent = 'Editar Pedido';
+        document.getElementById('pedidoId').value = pedido.idPedido;
+        document.getElementById('cliente').value = pedido.cliente.idCliente;
+        document.getElementById('estadoPago').value = pedido.estadoPago;
+        document.getElementById('direccionEnvio').value = pedido.direccionEnvio;
+        
+        modalInstance.show();
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al cargar los datos del pedido');
+    }
+}
+
+// Función para guardar pedido
+async function guardarPedido() {
+    const id = document.getElementById('pedidoId').value;
+    const pedido = {
+        cliente: {
+            idCliente: document.getElementById('cliente').value
+        },
+        estadoPago: document.getElementById('estadoPago').value,
+        direccionEnvio: document.getElementById('direccionEnvio').value,
+        fecha: new Date().toISOString()
+    };
+    
+    try {
+        const url = id ? `${API_URL}/${id}` : API_URL;
+        const method = id ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(pedido)
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Error al guardar');
+        }
+        
+        modalInstance.hide();
+        cargarPedidos();
+        mostrarExito(id ? 'Pedido actualizado correctamente' : 'Pedido creado correctamente');
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError(error.message);
+    }
+}
+
+// Función para eliminar pedido
+async function eliminarPedido(id) {
+    if (!confirm('¿Está seguro de eliminar este pedido?')) return;
+    
+    try {
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) throw new Error('Error al eliminar');
+        
+        cargarPedidos();
+        mostrarExito('Pedido eliminado correctamente');
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al eliminar el pedido');
+    }
+}
+
+// Ver detalle del pedido
+async function verDetalle(id) {
+    try {
+        const response = await fetch(`${API_URL}/${id}`);
+        const pedido = await response.json();
+        
+        alert(`Detalle del Pedido #${pedido.idPedido}\n\nCliente: ${pedido.cliente.nombre}\nEstado: ${pedido.estadoPago}\nDirección: ${pedido.direccionEnvio}`);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Funciones auxiliares
+function mostrarError(mensaje) {
+    alert('Error: ' + mensaje);
+}
+
+function mostrarExito(mensaje) {
+    alert(mensaje);
+}
+producto.js
+const API_URL = 'http://localhost:8080/api/productos';
+let modalInstance;
+
+// Cargar productos al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    cargarProductos();
+    modalInstance = new bootstrap.Modal(document.getElementById('productoModal'));
+});
+
+// Función para cargar todos los productos usando Axios
+async function cargarProductos() {
+    try {
+        const response = await axios.get(API_URL);
+        mostrarProductos(response.data);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('No se pudieron cargar los productos');
+    }
+}
+
+// Función para mostrar productos en la tabla
+function mostrarProductos(productos) {
+    const tbody = document.getElementById('tablaProductos');
+    
+    if (productos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay productos registrados</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = productos.map(producto => {
+        const estadoStock = producto.stock < 10 ? 
+            '<span class="badge bg-danger">Bajo Stock</span>' : 
+            '<span class="badge bg-success">Disponible</span>';
+        
+        return `
+            <tr>
+                <td>${producto.idProducto}</td>
+                <td>${producto.nombre}</td>
+                <td>$${producto.precio.toFixed(2)}</td>
+                <td>${producto.stock}</td>
+                <td>${estadoStock}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" onclick="editarProducto(${producto.idProducto})">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${producto.idProducto})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Función para buscar productos por nombre usando Axios
+async function buscarProductos() {
+    const nombre = document.getElementById('buscarNombre').value;
+    
+    if (!nombre.trim()) {
+        cargarProductos();
+        return;
+    }
+    
+    try {
+        const response = await axios.get(`${API_URL}/buscar`, {
+            params: { nombre: nombre }
+        });
+        mostrarProductos(response.data);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al buscar productos');
+    }
+}
+
+// Cargar productos con stock disponible
+async function cargarConStock() {
+    try {
+        const response = await axios.get(`${API_URL}/con-stock`);
+        mostrarProductos(response.data);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al cargar productos con stock');
+    }
+}
+
+// Cargar productos con bajo stock
+async function cargarBajoStock() {
+    try {
+        const response = await axios.get(`${API_URL}/bajo-stock`);
+        mostrarProductos(response.data);
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al cargar productos con bajo stock');
+    }
+}
+
+// Abrir modal para nuevo producto
+function abrirModalNuevo() {
+    document.getElementById('modalTitle').textContent = 'Nuevo Producto';
+    document.getElementById('formProducto').reset();
+    document.getElementById('productoId').value = '';
+}
+
+// Función para editar producto usando Axios
+async function editarProducto(id) {
+    try {
+        const response = await axios.get(`${API_URL}/${id}`);
+        const producto = response.data;
+        
+        document.getElementById('modalTitle').textContent = 'Editar Producto';
+        document.getElementById('productoId').value = producto.idProducto;
+        document.getElementById('nombre').value = producto.nombre;
+        document.getElementById('precio').value = producto.precio;
+        document.getElementById('stock').value = producto.stock;
+        
+        modalInstance.show();
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al cargar los datos del producto');
+    }
+}
+
+// Función para guardar producto usando Axios
+async function guardarProducto() {
+    const id = document.getElementById('productoId').value;
+    const producto = {
+        nombre: document.getElementById('nombre').value,
+        precio: parseFloat(document.getElementById('precio').value),
+        stock: parseInt(document.getElementById('stock').value)
+    };
+    
+    try {
+        if (id) {
+            await axios.put(`${API_URL}/${id}`, producto);
+            mostrarExito('Producto actualizado correctamente');
+        } else {
+            await axios.post(API_URL, producto);
+            mostrarExito('Producto creado correctamente');
+        }
+        
+        modalInstance.hide();
+        cargarProductos();
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError(error.response?.data?.message || 'Error al guardar el producto');
+    }
+}
+
+// Función para eliminar producto usando Axios
+async function eliminarProducto(id) {
+    if (!confirm('¿Está seguro de eliminar este producto?')) return;
+    
+    try {
+        await axios.delete(`${API_URL}/${id}`);
+        cargarProductos();
+        mostrarExito('Producto eliminado correctamente');
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarError('Error al eliminar el producto');
+    }
+}
+
+// Funciones auxiliares
+function mostrarError(mensaje) {
+    alert('Error: ' + mensaje);
+}
+
+function mostrarExito(mensaje) {
+    alert(mensaje);
+}
+Cliente.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZonaRefri, Reparación de Electrodomésticos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-tools"></i> Reparación de Electrodomésticos
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/clientes.html">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/productos.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pedidos.html">Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/thymeleaf">Vista Thymeleaf</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-people-fill"></i> Gestión de Clientes</h1>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="abrirModalNuevo()">
+                <i class="bi bi-plus-circle"></i> Nuevo Cliente
+            </button>
+        </div>
+
+        <!-- Búsqueda -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="buscarNombre" placeholder="Buscar por nombre...">
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-secondary" onclick="buscarClientes()">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="cargarClientes()">
+                            <i class="bi bi-arrow-clockwise"></i> Mostrar Todos
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Clientes -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaClientes">
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cliente -->
+    <div class="modal fade" id="clienteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Nuevo Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCliente">
+                        <input type="hidden" id="clienteId">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre *</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono *</label>
+                            <input type="text" class="form-control" id="telefono" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarCliente()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="clientes.js"></script>
+</body>
+</html>
+
+index.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZonaRefri, Reparación de Electrodomésticos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-tools"></i> ZonaRefri, Reparación de Electrodomésticos
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes.html">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/productos.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pedidos.html">Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/thymeleaf">Vista Thymeleaf</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section text-white text-center py-5">
+        <div class="container">
+            <h1 class="display-4 fw-bold">Bienvenido al Sistema de Gestión</h1>
+            <p class="lead">Administra clientes, productos y pedidos de forma eficiente</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row g-4">
+            <!-- Clientes Card -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    <div class="card-body text-center">
+                        <div class="icon-circle bg-primary text-white mx-auto mb-3">
+                            <i class="bi bi-people-fill fs-1"></i>
+                        </div>
+                        <h5 class="card-title">Clientes</h5>
+                        <p class="card-text">Gestiona la información de tus clientes</p>
+                        <a href="/clientes.html" class="btn btn-primary">Ir a Clientes</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Productos Card -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    <div class="card-body text-center">
+                        <div class="icon-circle bg-success text-white mx-auto mb-3">
+                            <i class="bi bi-box-seam fs-1"></i>
+                        </div>
+                        <h5 class="card-title">Productos</h5>
+                        <p class="card-text">Administra tu inventario de productos</p>
+                        <a href="/productos.html" class="btn btn-success">Ir a Productos</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pedidos Card -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm hover-card">
+                    <div class="card-body text-center">
+                        <div class="icon-circle bg-warning text-white mx-auto mb-3">
+                            <i class="bi bi-cart-fill fs-1"></i>
+                        </div>
+                        <h5 class="card-title">Pedidos</h5>
+                        <p class="card-text">Gestiona los pedidos de reparación</p>
+                        <a href="/pedidos.html" class="btn btn-warning text-white">Ir a Pedidos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="text-center mb-4">Estadísticas del Sistema</h2>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center p-4">
+                    <i class="bi bi-people text-primary fs-1"></i>
+                    <h3 class="mt-2" id="totalClientes">0</h3>
+                    <p class="text-muted">Total Clientes</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center p-4">
+                    <i class="bi bi-box-seam text-success fs-1"></i>
+                    <h3 class="mt-2" id="totalProductos">0</h3>
+                    <p class="text-muted">Total Productos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center p-4">
+                    <i class="bi bi-cart text-warning fs-1"></i>
+                    <h3 class="mt-2" id="totalPedidos">0</h3>
+                    <p class="text-muted">Total Pedidos</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card text-center p-4">
+                    <i class="bi bi-clock-history text-info fs-1"></i>
+                    <h3 class="mt-2" id="pedidosPendientes">0</h3>
+                    <p class="text-muted">Pedidos Pendientes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <p class="mb-0">&copy; 2025 Casa de Reparación de Electrodomésticos</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
+Pedidos.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZonaRefri — Gestión de Pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-tools"></i> zonaRefri — Reparación de Electrodomésticos
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes.html">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/productos.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/pedidos.html">Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/thymeleaf">Vista Thymeleaf</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-cart-fill"></i> Gestión de Pedidos</h1>
+            <button class="btn btn-warning text-white" data-bs-toggle="modal" data-bs-target="#pedidoModal" onclick="abrirModalNuevo()">
+                <i class="bi bi-plus-circle"></i> Nuevo Pedido
+            </button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <button class="btn btn-secondary" onclick="cargarPedidos()">
+                    <i class="bi bi-arrow-clockwise"></i> Todos
+                </button>
+                <button class="btn btn-warning text-white" onclick="cargarPendientes()">
+                    <i class="bi bi-clock"></i> Pendientes
+                </button>
+                <button class="btn btn-success" onclick="filtrarPorEstado('Pagado')">
+                    <i class="bi bi-check-circle"></i> Pagados
+                </button>
+                <button class="btn btn-danger" onclick="filtrarPorEstado('Cancelado')">
+                    <i class="bi bi-x-circle"></i> Cancelados
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabla de Pedidos -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-warning">
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Estado Pago</th>
+                                <th>Dirección</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPedidos">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="spinner-border text-warning" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pedido -->
+    <div class="modal fade" id="pedidoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Nuevo Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formPedido">
+                        <input type="hidden" id="pedidoId">
+                        <div class="mb-3">
+                            <label for="cliente" class="form-label">Cliente *</label>
+                            <select class="form-select" id="cliente" required>
+                                <option value="">Seleccione un cliente...</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="estadoPago" class="form-label">Estado de Pago *</label>
+                            <select class="form-select" id="estadoPago" required>
+                                <option value="Pendiente">Pendiente</option>
+                                <option value="Pagado">Pagado</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="direccionEnvio" class="form-label">Dirección de Envío *</label>
+                            <textarea class="form-control" id="direccionEnvio" rows="2" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning text-white" onclick="guardarPedido()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="pedidos.js"></script>
+</body>
+</html>
+producto.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zonaRefri — Gestión de Productos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-tools"></i> zonaRefri, Reparación de Electrodomésticos
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clientes.html">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/productos.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pedidos.html">Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/thymeleaf">Vista Thymeleaf</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="bi bi-box-seam"></i> Gestión de Productos</h1>
+            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#productoModal" onclick="abrirModalNuevo()">
+                <i class="bi bi-plus-circle"></i> Nuevo Producto
+            </button>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" id="buscarNombre" placeholder="Buscar por nombre...">
+                    </div>
+                    <div class="col-md-8">
+                        <button class="btn btn-secondary" onclick="buscarProductos()">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="cargarProductos()">
+                            <i class="bi bi-arrow-clockwise"></i> Mostrar Todos
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="cargarConStock()">
+                            <i class="bi bi-check-circle"></i> Con Stock
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="cargarBajoStock()">
+                            <i class="bi bi-exclamation-triangle"></i> Bajo Stock
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Productos -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaProductos">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                    <div class="spinner-border text-success" role="status">
+                                        <span class="visually-hidden">Cargando...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Producto -->
+    <div class="modal fade" id="productoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Nuevo Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formProducto">
+                        <input type="hidden" id="productoId">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre *</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="precio" class="form-label">Precio *</label>
+                            <input type="number" step="0.01" class="form-control" id="precio" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="stock" class="form-label">Stock *</label>
+                            <input type="number" class="form-control" id="stock" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" onclick="guardarProducto()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Usando Axios para este módulo (requisito del enunciado) -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="productos.js"></script>
+</body>
+</html>
+templates
+
+dashboar.html
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>ZonaRefri, Reparación de Electrodomésticos — Panel de Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        h1 { color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ccc; padding: 0.5rem; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <!-- Encabezado principal -->
+    <h1>ZonaRefri, Reparación de Electrodomésticos</h1>
+    <p><em>Panel de control con estadísticas y gestión de clientes, productos y pedidos</em></p>
+
+    <!-- Estadísticas -->
+    <p>Total de clientes: <strong th:text="${totalClientes}"></strong></p>
+    <p>Total de productos: <strong th:text="${totalProductos}"></strong></p>
+    <p>Total de pedidos: <strong th:text="${totalPedidos}"></strong></p>
+    <p>Pedidos pendientes: <strong th:text="${cantidadPendientes}"></strong></p>
+
+    <!-- Productos con bajo stock -->
+    <h2>Productos con bajo stock</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="producto : ${productosBajoStock}">
+                <td th:text="${producto.nombre}"></td>
+                <td th:text="${producto.stock}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Clientes registrados -->
+    <h2>Clientes registrados</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="cliente : ${clientes}">
+                <td th:text="${cliente.nombre}"></td>
+                <td th:text="${cliente.email}"></td>
+                <td th:text="${cliente.telefono}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
+aplicación propertes
+server.port=8080
+
+spring.datasource.url=jdbc:mysql://localhost:3306/zonarefridb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.thymeleaf.cache=false
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+
+logging.level.ar.edu.centro8.daw=DEBUG
+logging.level.org.springframework.web=INFO
+logging.level.org.hibernate.SQL=DEBUG
+pom.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.0</version>
+        <relativePath/>
+    </parent>
+    
+    <groupId>ar.edu.centro8.daw</groupId>
+    <artifactId>trabajo-integrador-gilma-aguada</artifactId>
+    <version>1.0.0</version>
+    <name>Trabajo Integrador - Casa de Reparación</name>
+    <description>Sistema de gestión para casa de reparación de electrodomésticos</description>
+    
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+    
+    <dependencies>
+        <!-- Spring Boot Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        
+        <!-- Spring Boot Data JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        
+        <!-- Thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        
+       <!-- MySQL Connector -->
+      <dependency>
+           <groupId>com.mysql</groupId>
+           <artifactId>mysql-connector-j</artifactId>
+      <version>8.0.33</version>
+      </dependency>
+       
+        <!-- Spring Boot DevTools -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        
+        <!-- Spring Boot Starter Test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+
+
+
